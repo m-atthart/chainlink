@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 type TechnologyCardProps = {
 	name: string;
@@ -10,7 +11,25 @@ type TechnologyCardProps = {
 };
 
 const HomeContents = () => {
+	const [url, setUrl] = useState("");
+	const [notes, setNotes] = useState("");
 	const { data, status } = useSession();
+	const { data: chain } = trpc.useQuery([
+		"example.getChain",
+		{ userId: data?.user?.id as string },
+	]);
+
+	useEffect(() => {
+		console.log(url);
+	}, [url]);
+
+	const ctx = trpc.useContext();
+	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
+		onSuccess: () => ctx.invalidateQueries("example.getChain"),
+	});
+	const addUrl = () => {
+		addToChain({ url, notes });
+	};
 
 	if (status === "loading") return <div>Loading...</div>;
 
@@ -19,6 +38,12 @@ const HomeContents = () => {
 			<div>
 				<div>Please log in</div>
 				<button onClick={() => signIn("twitch")}>Sign in with Twitch</button>
+				<input
+					type="text"
+					value={url}
+					onChange={(e) => setUrl(e.target.value)}
+				/>
+				<button onClick={addUrl}></button>
 			</div>
 		);
 
@@ -26,6 +51,38 @@ const HomeContents = () => {
 		<div>
 			Hello {data.user?.name}
 			<button onClick={() => signOut()}>Sign Out</button>
+			<div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+				<input
+					type="text"
+					placeholder="url"
+					id="url"
+					value={url}
+					onChange={(e) => setUrl(e.target.value)}
+				></input>
+				<input
+					type="text"
+					placeholder="notes"
+					id="notes"
+					value={notes}
+					onChange={(e) => setNotes(e.target.value)}
+				></input>
+				<button onClick={addUrl}>Add Url</button>
+			</div>
+			{chain?.map((link) => {
+				return (
+					<p
+						style={{ border: "1px solid black", margin: "5px", width: "400px" }}
+					>
+						id: {link.id}
+						<br />
+						url: {link.url}
+						<br />
+						notes: {link.notes}
+						<br />
+						userId: {link.userId}
+					</p>
+				);
+			})}
 		</div>
 	);
 };
