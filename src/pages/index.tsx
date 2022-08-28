@@ -72,6 +72,7 @@ const HomeContents = () => {
 				return (
 					<p
 						style={{ border: "1px solid black", margin: "5px", width: "400px" }}
+						key={link.id}
 					>
 						id: {link.id}
 						<br />
