@@ -28,11 +28,20 @@ const HomeContents = () => {
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
-		<div className="h-screen bg-blue-300">
-			Hello {session?.user?.name}
+		<div className="flex h-full flex-col items-center justify-start gap-8 bg-blue-300">
 			{session && (
 				<>
-					<button onClick={() => signOut()}>Sign Out</button>
+					<header className="flex w-full items-center justify-end p-8">
+						<div className="align-center m-2 flex h-12 w-36 justify-center bg-slate-600 text-white">
+							<p>Hello {session?.user?.name}</p>
+						</div>
+						<button
+							className="h-12 w-36 bg-slate-600 text-white"
+							onClick={() => signOut()}
+						>
+							Sign Out
+						</button>
+					</header>
 					<div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
 						<input
 							type="text"
@@ -52,22 +61,20 @@ const HomeContents = () => {
 					</div>
 				</>
 			)}
-			{chain?.map((link) => {
-				return (
-					<p
-						style={{ border: "1px solid black", margin: "5px", width: "400px" }}
-						key={link.id}
-					>
-						id: {link.id}
-						<br />
-						url: {link.url}
-						<br />
-						notes: {link.notes}
-						<br />
-						userId: {link.userId}
-					</p>
-				);
-			})}
+			<div className="flex flex-col items-center justify-start">
+				{chain?.map((link) => {
+					return (
+						<div
+							className="m-2 flex w-96 flex-col items-center justify-center rounded-lg border-2 border-black p-4"
+							key={link.id}
+						>
+							<p>url: {link.url}</p>
+							<p>notes: {link.notes}</p>
+							<p>userId: {link.userId}</p>
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 };
