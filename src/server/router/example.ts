@@ -19,12 +19,13 @@ export const exampleRouter = createRouter()
 			userId: z.string(),
 		}),
 		async resolve({ input, ctx }) {
-			return await ctx.prisma.link.findMany({
+			const response = await ctx.prisma.link.findMany({
 				where: {
 					userId: {
 						equals: input.userId,
 					},
 				},
 			});
+			return response;
 		},
 	});

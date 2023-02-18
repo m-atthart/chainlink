@@ -48,7 +48,7 @@ const HomeContents = () => {
 		);
 
 	return (
-		<div>
+		<div className="bg-blue-800 h-screen">
 			Hello {data.user?.name}
 			<button onClick={() => signOut()}>Sign Out</button>
 			<div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
