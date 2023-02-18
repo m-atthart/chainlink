@@ -5,7 +5,7 @@ import { trpc } from "../../../utils/trpc";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-const HomeContents = () => {
+const Chain = () => {
 	const [inputUrl, setInputUrl] = useState("");
 	const [notes, setNotes] = useState("");
 	const { data: session, status } = useSession();
@@ -68,7 +68,7 @@ const HomeContents = () => {
 							className="m-2 flex w-96 flex-col items-center justify-center rounded-lg border-2 border-black p-4"
 							key={link.id}
 						>
-							<p>url: {link.url}</p>
+							<p>url: <a href={link.url} target="_blank" rel="noreferrer" className="text-purple-600">{link.url}</a></p>
 							<p>notes: {link.notes}</p>
 							<p>userId: {link.userId}</p>
 						</div>
@@ -79,7 +79,7 @@ const HomeContents = () => {
 	);
 };
 
-const Home: NextPage = () => {
+const ChainPage: NextPage = () => {
 	return (
 		<>
 			<Head>
@@ -88,9 +88,9 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<HomeContents />
+			<Chain />
 		</>
 	);
 };
 
-export default Home;
+export default ChainPage;
