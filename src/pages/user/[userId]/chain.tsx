@@ -28,7 +28,7 @@ const Chain = () => {
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
-		<div className="flex h-full flex-col items-center justify-start gap-8 bg-blue-300">
+		<div className="flex h-full w-full flex-col items-center justify-start gap-8 bg-blue-300">
 			{session && (
 				<>
 					<header className="flex w-full items-center justify-end p-8">
@@ -61,20 +61,38 @@ const Chain = () => {
 					</div>
 				</>
 			)}
-			<div className="flex flex-col items-center justify-start">
-				{chain?.map((link) => {
-					return (
-						<div
-							className="m-2 flex w-96 flex-col items-center justify-center rounded-lg border-2 border-black p-4"
-							key={link.id}
-						>
-							<p>url: <a href={link.url} target="_blank" rel="noreferrer" className="text-purple-600">{link.url}</a></p>
-							<p>notes: {link.notes}</p>
-							<p>userId: {link.userId}</p>
-						</div>
-					);
-				})}
+			<div className="flex w-3/5 flex-col items-center justify-start border border-red-900">
+				{chain?.map((link) => (
+					<Linkk key={link.id} link={link} />
+				))}
 			</div>
+		</div>
+	);
+};
+
+const Linkk = ({
+	link,
+}: {
+	link: { id: number; url: string; notes: string | null; userId: string };
+}) => {
+	return (
+		<div
+			className="m-2 flex w-3/5 flex-col items-center justify-center rounded-lg border-2 border-black p-4"
+			key={link.id}
+		>
+			<p>
+				url:{" "}
+				<a
+					href={link.url}
+					target="_blank"
+					rel="noreferrer"
+					className="text-purple-600"
+				>
+					{link.url}
+				</a>
+			</p>
+			<p>notes: {link.notes}</p>
+			<p>userId: {link.userId}</p>
 		</div>
 	);
 };
