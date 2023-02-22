@@ -10,12 +10,13 @@ const Chain = () => {
 	const [notes, setNotes] = useState("");
 	const { data: session, status } = useSession();
 	const router = useRouter();
-	let { userId } = router.query as { userId: string };
-	if (userId === "me") {
-		if (!session?.user?.id) router.push("/login");
-		else userId = session?.user?.id;
+	let { userId: username } = router.query as { userId: string };
+	if (username === "me") {
+		if (!session?.user?.name) router.push("/login");
+		else router.push(`/user/${session.user.name}/chain`);
 	}
-	const { data: chain } = trpc.useQuery(["example.getChain", { userId }]);
+
+	const { data: chain } = trpc.useQuery(["example.getChain", { username }]);
 
 	const ctx = trpc.useContext();
 	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
@@ -73,7 +74,7 @@ const Chain = () => {
 const Linkk = ({
 	link,
 }: {
-	link: { id: number; url: string; notes: string | null; userId: string };
+	link: { id: number; url: string; notes: string | null; username: string };
 }) => {
 	return (
 		<div
@@ -92,7 +93,7 @@ const Linkk = ({
 				</a>
 			</p>
 			<p>notes: {link.notes}</p>
-			<p>userId: {link.userId}</p>
+			<p>username: {link.username}</p>
 		</div>
 	);
 };
