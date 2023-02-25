@@ -22,19 +22,20 @@ const Chain = () => {
 	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
 		onSuccess: () => ctx.invalidateQueries("example.getChain"),
 	});
-	const addUrl = () => {
+
+	const addLinkk = () => {
 		addToChain({ url: inputUrl, notes });
 	};
 
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
-		<div className="flex h-full min-h-screen w-full flex-col items-center justify-start gap-8 bg-slate-700 bg-gradient-to-br">
+		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-slate-700 bg-gradient-to-br">
 			{session && (
 				<>
 					<header className="flex w-full items-center justify-end p-8">
 						<div className="align-center m-2 flex h-12 w-36 justify-center bg-slate-600 text-white">
-							<p>Hello {session.user?.name}</p>
+							<p>Hello {session?.user?.name}</p>
 						</div>
 						<button
 							className="h-12 w-36 bg-slate-600 text-white"
@@ -43,22 +44,26 @@ const Chain = () => {
 							Sign Out
 						</button>
 					</header>
-					<div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+					<div className="flex flex-col items-center gap-2">
 						<input
+							className="w-96 rounded-md p-2"
 							type="text"
-							placeholder="url"
-							id="url"
+							placeholder="URL"
 							value={inputUrl}
 							onChange={(e) => setInputUrl(e.target.value)}
 						></input>
-						<input
-							type="text"
-							placeholder="notes"
-							id="notes"
+						<textarea
+							className="h-44 w-96 rounded-md p-2"
+							placeholder="Notes"
 							value={notes}
 							onChange={(e) => setNotes(e.target.value)}
-						></input>
-						<button onClick={addUrl}>Add Url</button>
+						></textarea>
+						<button
+							className="h-12 w-28 rounded-md bg-blue-600 text-white"
+							onClick={addLinkk}
+						>
+							Add Linkk
+						</button>
 					</div>
 				</>
 			)}
@@ -88,7 +93,7 @@ const Linkk = ({
 				</div>
 				<div className="flex h-full flex-col justify-start">
 					<h3 className="text-xl">Title Title Title Title Title Title</h3>
-					<p className="text-slate-600">
+					<p className="text-gray-500">
 						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
 						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
 					</p>
