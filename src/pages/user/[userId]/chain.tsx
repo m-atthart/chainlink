@@ -29,12 +29,12 @@ const Chain = () => {
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
-		<div className="flex h-full w-full flex-col items-center justify-start gap-8 bg-blue-300">
+		<div className="flex h-full min-h-screen w-full flex-col items-center justify-start gap-8 bg-slate-700 bg-gradient-to-br">
 			{session && (
 				<>
 					<header className="flex w-full items-center justify-end p-8">
 						<div className="align-center m-2 flex h-12 w-36 justify-center bg-slate-600 text-white">
-							<p>Hello {session?.user?.name}</p>
+							<p>Hello {session.user?.name}</p>
 						</div>
 						<button
 							className="h-12 w-36 bg-slate-600 text-white"
@@ -62,7 +62,7 @@ const Chain = () => {
 					</div>
 				</>
 			)}
-			<div className="flex w-3/5 flex-col items-center justify-start border border-red-900">
+			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
 				{chain?.map((link) => (
 					<Linkk key={link.id} link={link} />
 				))}
@@ -76,24 +76,30 @@ const Linkk = ({
 }: {
 	link: { id: number; url: string; notes: string | null; username: string };
 }) => {
+	//make gradient to br B64FCD -> 3C19A8
 	return (
 		<div
-			className="m-2 flex w-3/5 flex-col items-center justify-center rounded-lg border-2 border-black p-4"
+			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
 			key={link.id}
 		>
-			<p>
-				url:{" "}
-				<a
-					href={link.url}
-					target="_blank"
-					rel="noreferrer"
-					className="text-purple-600"
-				>
-					{link.url}
-				</a>
-			</p>
-			<p>notes: {link.notes}</p>
-			<p>username: {link.username}</p>
+			<div className="flex flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
+				<div className="aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
+					thumbnail
+				</div>
+				<div className="flex h-full flex-col justify-start">
+					<h3 className="text-xl">Title Title Title Title Title Title</h3>
+					<p className="text-slate-600">
+						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
+						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
+					</p>
+				</div>
+			</div>
+			{link.notes && (
+				<div>
+					<p>Notes:</p>
+					<p>{link.notes}</p>
+				</div>
+			)}
 		</div>
 	);
 };
