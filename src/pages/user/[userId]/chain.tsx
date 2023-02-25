@@ -30,7 +30,7 @@ const Chain = () => {
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
-		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-slate-700 bg-gradient-to-br">
+		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
 			{session && (
 				<>
 					<header className="flex w-full items-center justify-end p-8">
@@ -81,7 +81,6 @@ const Linkk = ({
 }: {
 	link: { id: number; url: string; notes: string | null; username: string };
 }) => {
-	//make gradient to br B64FCD -> 3C19A8
 	return (
 		<div
 			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
