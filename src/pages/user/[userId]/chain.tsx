@@ -34,7 +34,7 @@ const Chain = () => {
 			{session && (
 				<>
 					<header className="flex w-full items-center justify-end p-8">
-						<div className="align-center m-2 flex h-12 w-36 justify-center bg-slate-600 text-white">
+						<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
 							<p>Hello {session?.user?.name}</p>
 						</div>
 						<button
