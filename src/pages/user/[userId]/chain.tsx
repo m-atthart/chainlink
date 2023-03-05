@@ -5,74 +5,110 @@ import { trpc } from "../../../utils/trpc";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-const HomeContents = () => {
+const Chain = () => {
 	const [inputUrl, setInputUrl] = useState("");
 	const [notes, setNotes] = useState("");
 	const { data: session, status } = useSession();
 	const router = useRouter();
-	let { userId } = router.query as { userId: string };
-	if (userId === "me") {
-		if (!session?.user?.id) router.push("/login");
-		else userId = session?.user?.id;
+	let { userId: username } = router.query as { userId: string };
+	if (username === "me") {
+		if (!session?.user?.name) router.push("/login");
+		else router.push(`/user/${session.user.name}/chain`);
 	}
-	const { data: chain } = trpc.useQuery(["example.getChain", { userId }]);
+
+	const { data: chain } = trpc.useQuery(["example.getChain", { username }]);
 
 	const ctx = trpc.useContext();
 	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
 		onSuccess: () => ctx.invalidateQueries("example.getChain"),
 	});
-	const addUrl = () => {
+
+	const addLinkk = () => {
 		addToChain({ url: inputUrl, notes });
 	};
 
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
-		<div className="h-screen bg-blue-300">
-			Hello {session?.user?.name}
+		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
 			{session && (
 				<>
-					<button onClick={() => signOut()}>Sign Out</button>
-					<div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+					<header className="flex w-full items-center justify-end p-8">
+						<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
+							<p>Hello {session?.user?.name}</p>
+						</div>
+						<button
+							className="h-12 w-36 bg-slate-600 text-white"
+							onClick={() => signOut()}
+						>
+							Sign Out
+						</button>
+					</header>
+					<div className="flex flex-col items-center gap-2">
 						<input
+							className="w-96 rounded-md p-2"
 							type="text"
-							placeholder="url"
-							id="url"
+							placeholder="URL"
 							value={inputUrl}
 							onChange={(e) => setInputUrl(e.target.value)}
 						></input>
-						<input
-							type="text"
-							placeholder="notes"
-							id="notes"
+						<textarea
+							className="h-44 w-96 rounded-md p-2"
+							placeholder="Notes"
 							value={notes}
 							onChange={(e) => setNotes(e.target.value)}
-						></input>
-						<button onClick={addUrl}>Add Url</button>
+						></textarea>
+						<button
+							className="h-12 w-28 rounded-md bg-blue-600 text-white"
+							onClick={addLinkk}
+						>
+							Add Linkk
+						</button>
 					</div>
 				</>
 			)}
-			{chain?.map((link) => {
-				return (
-					<p
-						style={{ border: "1px solid black", margin: "5px", width: "400px" }}
-						key={link.id}
-					>
-						id: {link.id}
-						<br />
-						url: {link.url}
-						<br />
-						notes: {link.notes}
-						<br />
-						userId: {link.userId}
-					</p>
-				);
-			})}
+			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
+				{chain?.map((link) => (
+					<Linkk key={link.id} link={link} />
+				))}
+			</div>
 		</div>
 	);
 };
 
-const Home: NextPage = () => {
+const Linkk = ({
+	link,
+}: {
+	link: { id: number; url: string; notes: string | null; username: string };
+}) => {
+	return (
+		<div
+			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
+			key={link.id}
+		>
+			<div className="flex flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
+				<div className="aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
+					thumbnail
+				</div>
+				<div className="flex h-full flex-col justify-start">
+					<h3 className="text-xl">Title Title Title Title Title Title</h3>
+					<p className="text-gray-500">
+						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
+						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
+					</p>
+				</div>
+			</div>
+			{link.notes && (
+				<div>
+					<p>Notes:</p>
+					<p>{link.notes}</p>
+				</div>
+			)}
+		</div>
+	);
+};
+
+const ChainPage: NextPage = () => {
 	return (
 		<>
 			<Head>
@@ -81,9 +117,9 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<HomeContents />
+			<Chain />
 		</>
 	);
 };
 
-export default Home;
+export default ChainPage;
