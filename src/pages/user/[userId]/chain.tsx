@@ -29,6 +29,12 @@ const Chain = () => {
 		addToChain({ url: inputUrl, notes });
 	};
 
+	useEffect(() => {
+		getOgProperties(
+			"https://twitter.com/ThePrimeagen/status/1641499089199063052"
+		).then((properties) => console.log(properties));
+	}, []);
+
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
@@ -85,8 +91,9 @@ function getOgProperties(url: string) {
 		.then((res) => res.text())
 		.then((data) => {
 			const document = parse(data);
-			const html = document.childNodes[1] as Element;
+			const html = document.childNodes[0] as Element;
 			const head = html.childNodes[0] as Element;
+			console.log(head.childNodes);
 			const metaTags = head.childNodes.filter(
 				(node) => node.nodeName === "meta"
 			) as Element[];
@@ -115,14 +122,12 @@ const Linkk = ({
 }) => {
 	const [ogProperties, setOgProperties] = useState<OgProperties>([]);
 
-	fetch("https://www.youtube.com/");
-
 	useEffect(() => {
 		//getOgProperties(link.url).then((properties) => setOgProperties(properties));
 	}, [link.url]);
 
 	useEffect(() => {
-		console.log(ogProperties);
+		//console.log(ogProperties);
 	}, [ogProperties]);
 
 	return (
