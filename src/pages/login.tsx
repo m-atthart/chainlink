@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { signIn, useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 
 const Login: NextPage = () => {
 	const router = useRouter();
-	const { data: session, status } = useSession();
-	if (session?.user?.id) router.push("/user/me/chain");
+	const { user } = useUser();
+	if (user?.id) router.push("/user/me/chain");
 
 	return (
 		<>
@@ -19,7 +19,10 @@ const Login: NextPage = () => {
 			<div className="flex h-screen items-center justify-center bg-slate-600">
 				<div className="flex h-20 w-72 flex-col justify-center gap-2 rounded border-2 border-black align-middle text-white">
 					<p className="text-center">Please log in</p>
-					<button className="text-purple-500" onClick={() => signIn("twitch")}>
+					<button
+						className="text-purple-500"
+						onClick={() => console.log("signing in")}
+					>
 						Sign in with Twitch
 					</button>
 				</div>

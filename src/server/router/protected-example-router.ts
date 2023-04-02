@@ -14,7 +14,7 @@ export const protectedExampleRouter = createProtectedRouter()
 				data: {
 					url: input.url,
 					notes: input.notes,
-					username: ctx.session.user.name!,
+					username: ctx.session.user.username!,
 				},
 			});
 		},
