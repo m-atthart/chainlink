@@ -16,7 +16,7 @@ export const createContext = async (opts?: CreateNextContextOptions) => {
 	const req = opts?.req;
 	const res = opts?.res;
 
-	const session = req && res && getAuth(opts.req);
+	const session = req && res && getAuth(req);
 
 	return {
 		req,
