@@ -2,38 +2,44 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { parse } from "parse5";
 import { Element } from "parse5/dist/tree-adapters/default";
 
 const Chain = () => {
-	const { data: session, status } = useSession();
+	const { isLoaded, isSignedIn, user } = useUser();
 	const router = useRouter();
 	let { userId: username } = router.query as { userId: string };
 	if (username === "me") {
-		if (!session?.user?.name) router.push("/login");
-		else router.push(`/user/${session.user.name}/chain`);
+		if (!user?.username) router.push("/login");
+		else router.push(`/user/${user.username}/chain`);
 	}
 
 	const { data: chain } = trpc.useQuery(["example.getChain", { username }]);
 
-	if (status === "loading") return <div>Loading...</div>;
+	if (!isLoaded) {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
 			<header className="flex w-full items-center justify-end p-8">
 				<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
-					<p>Hello {session?.user?.name}</p>
+					<p>Hello {user?.username}</p>
 				</div>
 				<button
 					className="h-12 w-36 bg-slate-600 text-white"
-					onClick={session ? () => signOut() : () => signIn("twitch")}
+					onClick={
+						isSignedIn
+							? () => console.log("signing out")
+							: () => console.log("signing in")
+					}
 				>
-					{session ? "Sign Out" : "Sign In"}
-				</button>
+					{isSignedIn ? "Sign Out" : "Sign In"}
+				</button>{" "}
 			</header>
-			{session && <AddLinkk />}
+			{isSignedIn && <AddLinkk />}
 			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
 				{chain?.map((link) => (
 					<Linkk key={link.id} link={link} />
