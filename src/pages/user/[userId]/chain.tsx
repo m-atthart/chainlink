@@ -6,8 +6,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const Chain = () => {
-	const [inputUrl, setInputUrl] = useState("");
-	const [notes, setNotes] = useState("");
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	let { userId: username } = router.query as { userId: string };
@@ -18,6 +16,35 @@ const Chain = () => {
 
 	const { data: chain } = trpc.useQuery(["example.getChain", { username }]);
 
+	if (status === "loading") return <div>Loading...</div>;
+
+	return (
+		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
+			<header className="flex w-full items-center justify-end p-8">
+				<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
+					<p>Hello {session?.user?.name}</p>
+				</div>
+				<button
+					className="h-12 w-36 bg-slate-600 text-white"
+					onClick={session ? () => signOut() : () => signIn("twitch")}
+				>
+					{session ? "Sign Out" : "Sign In"}
+				</button>
+			</header>
+			{session && <AddLinkk />}
+			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
+				{chain?.map((link) => (
+					<Linkk key={link.id} link={link} />
+				))}
+			</div>
+		</div>
+	);
+};
+
+const AddLinkk = () => {
+	const [inputUrl, setInputUrl] = useState("");
+	const [notes, setNotes] = useState("");
+
 	const ctx = trpc.useContext();
 	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
 		onSuccess: () => ctx.invalidateQueries("example.getChain"),
@@ -27,51 +54,27 @@ const Chain = () => {
 		addToChain({ url: inputUrl, notes });
 	};
 
-	if (status === "loading") return <div>Loading...</div>;
-
 	return (
-		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
-			{session && (
-				<>
-					<header className="flex w-full items-center justify-end p-8">
-						<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
-							<p>Hello {session?.user?.name}</p>
-						</div>
-						<button
-							className="h-12 w-36 bg-slate-600 text-white"
-							onClick={() => signOut()}
-						>
-							Sign Out
-						</button>
-					</header>
-					<div className="flex flex-col items-center gap-2">
-						<input
-							className="w-96 rounded-md p-2"
-							type="text"
-							placeholder="URL"
-							value={inputUrl}
-							onChange={(e) => setInputUrl(e.target.value)}
-						></input>
-						<textarea
-							className="h-44 w-96 rounded-md p-2"
-							placeholder="Notes"
-							value={notes}
-							onChange={(e) => setNotes(e.target.value)}
-						></textarea>
-						<button
-							className="h-12 w-28 rounded-md bg-blue-600 text-white"
-							onClick={addLinkk}
-						>
-							Add Linkk
-						</button>
-					</div>
-				</>
-			)}
-			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
-				{chain?.map((link) => (
-					<Linkk key={link.id} link={link} />
-				))}
-			</div>
+		<div className="flex flex-col items-center gap-2">
+			<input
+				className="w-96 rounded-md p-2"
+				type="text"
+				placeholder="URL"
+				value={inputUrl}
+				onChange={(e) => setInputUrl(e.target.value)}
+			></input>
+			<textarea
+				className="h-44 w-96 rounded-md p-2"
+				placeholder="Notes"
+				value={notes}
+				onChange={(e) => setNotes(e.target.value)}
+			></textarea>
+			<button
+				className="h-12 w-28 rounded-md bg-blue-600 text-white"
+				onClick={addLinkk}
+			>
+				Add Linkk
+			</button>
 		</div>
 	);
 };
