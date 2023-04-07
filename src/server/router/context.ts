@@ -1,28 +1,35 @@
 // src/server/router/context.ts
-import * as trpc from "@trpc/server";
-import * as trpcNext from "@trpc/server/adapters/next";
-import { unstable_getServerSession as getServerSession } from "next-auth";
-
-import { authOptions as nextAuthOptions } from "../../pages/api/auth/[...nextauth]";
+import { router, type inferAsyncReturnType } from "@trpc/server";
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
+import { getAuth, clerkClient } from "@clerk/nextjs/server";
+import type {
+	SignedInAuthObject,
+	SignedOutAuthObject,
+} from "@clerk/nextjs/dist/api";
 
-export const createContext = async (
-  opts?: trpcNext.CreateNextContextOptions,
-) => {
-  const req = opts?.req;
-  const res = opts?.res;
-
-  const session =
-    req && res && (await getServerSession(req, res, nextAuthOptions));
-
-  return {
-    req,
-    res,
-    session,
-    prisma,
-  };
+type AuthContextProps = {
+	auth: SignedInAuthObject | SignedOutAuthObject;
 };
 
-type Context = trpc.inferAsyncReturnType<typeof createContext>;
+export const createContext = async (opts?: CreateNextContextOptions) => {
+	const req = opts?.req;
+	const res = opts?.res;
 
-export const createRouter = () => trpc.router<Context>();
+	const session = req && res && getAuth(req);
+	if (session && session.userId && !session.user) {
+		const user = await clerkClient.users.getUser(session.userId);
+		session.user = user;
+	}
+
+	return {
+		req,
+		res,
+		session,
+		prisma,
+	};
+};
+
+type Context = inferAsyncReturnType<typeof createContext>;
+
+export const createRouter = () => router<Context>();

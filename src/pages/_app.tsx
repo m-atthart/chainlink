@@ -3,19 +3,16 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { SessionProvider } from "next-auth/react";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import "../styles/globals.css";
 
-const MyApp: AppType = ({
-	Component,
-	pageProps: { session, ...pageProps },
-}) => {
+const MyApp: AppType = ({ Component, pageProps }) => {
 	return (
 		<>
-			<SessionProvider session={session}>
+			<ClerkProvider {...pageProps}>
 				<Component {...pageProps} />
-			</SessionProvider>
+			</ClerkProvider>
 			<Analytics />
 		</>
 	);
