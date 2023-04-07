@@ -2,7 +2,7 @@
 import { router, type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
-import { getAuth } from "@clerk/nextjs/server";
+import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import type {
 	SignedInAuthObject,
 	SignedOutAuthObject,
@@ -17,6 +17,10 @@ export const createContext = async (opts?: CreateNextContextOptions) => {
 	const res = opts?.res;
 
 	const session = req && res && getAuth(req);
+	if (session && session.userId && !session.user) {
+		const user = await clerkClient.users.getUser(session.userId);
+		session.user = user;
+	}
 
 	return {
 		req,

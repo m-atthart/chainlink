@@ -9,7 +9,6 @@ export const protectedExampleRouter = createProtectedRouter()
 			notes: z.string().nullable(),
 		}),
 		async resolve({ input, ctx }) {
-			console.log(input.url, input.notes, ctx.session.user.id);
 			return await ctx.prisma.link.create({
 				data: {
 					url: input.url,
