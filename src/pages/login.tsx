@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignIn } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 const Login: NextPage = () => {
 	const router = useRouter();
@@ -16,16 +17,20 @@ const Login: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<div className="flex h-screen items-center justify-center bg-slate-600">
-				<div className="flex h-20 w-72 flex-col justify-center gap-2 rounded border-2 border-black align-middle text-white">
-					<p className="text-center">Please log in</p>
-					<button
-						className="text-purple-500"
-						onClick={() => console.log("signing in")}
-					>
-						Sign in with Twitch
-					</button>
-				</div>
+			<div className="flex h-screen w-screen items-center justify-center bg-slate-600">
+				<SignIn
+					appearance={{
+						baseTheme: dark,
+						elements: {
+							rootBox:
+								"flex items-center justify-center h-screen w-screen bg-gradient-to-br from-gradient-start to-gradient-end",
+							card: "bg-slate-800",
+							footer: {
+								display: "none",
+							},
+						},
+					}}
+				/>
 			</div>
 		</>
 	);

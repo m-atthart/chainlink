@@ -2,13 +2,14 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { parse } from "parse5";
 import { Element } from "parse5/dist/tree-adapters/default";
 
 const Chain = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
+	const { signOut } = useAuth();
 	const router = useRouter();
 	let { userId: username } = router.query as { userId: string };
 	if (username === "me") {
@@ -30,14 +31,10 @@ const Chain = () => {
 				</div>
 				<button
 					className="h-12 w-36 bg-slate-600 text-white"
-					onClick={
-						isSignedIn
-							? () => console.log("signing out")
-							: () => console.log("signing in")
-					}
+					onClick={isSignedIn ? () => signOut() : () => router.push("/login")}
 				>
 					{isSignedIn ? "Sign Out" : "Sign In"}
-				</button>{" "}
+				</button>
 			</header>
 			{isSignedIn && <AddLinkk />}
 			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
