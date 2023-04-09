@@ -1,6 +1,5 @@
-// src/server/router/context.ts
-import { router, type inferAsyncReturnType } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type { inferAsyncReturnType } from "@trpc/server";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
 import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import type {
@@ -30,6 +29,4 @@ export const createContext = async (opts?: CreateNextContextOptions) => {
 	};
 };
 
-type Context = inferAsyncReturnType<typeof createContext>;
-
-export const createRouter = () => router<Context>();
+export type Context = inferAsyncReturnType<typeof createContext>;

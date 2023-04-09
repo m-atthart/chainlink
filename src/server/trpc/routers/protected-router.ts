@@ -1,11 +1,11 @@
 import * as trpc from "@trpc/server";
-import { createRouter } from "./context";
+import { createLegacyRouter } from "../index";
 
 /**
  * Creates a tRPC router that asserts all queries and mutations are from an authorized user. Will throw an unauthorized error if a user is not signed in.
  */
 export function createProtectedRouter() {
-	return createRouter().middleware(({ ctx, next }) => {
+	return createLegacyRouter().middleware(({ ctx, next }) => {
 		if (!ctx.session?.user) {
 			throw new trpc.TRPCError({ code: "UNAUTHORIZED" });
 		}
