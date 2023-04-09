@@ -25,6 +25,9 @@ const Login: NextPage = () => {
 
 			<div className="flex h-screen w-screen items-center justify-center bg-slate-600">
 				<SignIn
+					routing="path"
+					path="/login"
+					redirectUrl="/me"
 					appearance={{
 						baseTheme: dark,
 						elements: {
