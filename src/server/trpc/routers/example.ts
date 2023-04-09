@@ -1,12 +1,13 @@
-import { createRouter } from "./context";
+import { createLegacyRouter } from "../index";
 import { z } from "zod";
 
-export const exampleRouter = createRouter()
+export const exampleRouter = createLegacyRouter()
 	.query("getChain", {
 		input: z.object({
 			username: z.string(),
 		}),
 		async resolve({ input, ctx }) {
+			console.log("getChain");
 			const response = await ctx.prisma.link.findMany({
 				where: {
 					username: {

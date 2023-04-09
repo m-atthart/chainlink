@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { trpc } from "../utils/trpc";
+import { api } from "../utils/trpc";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
@@ -15,7 +15,7 @@ const Chain = () => {
 		else router.push(`/${currentUser.username}`);
 	}
 
-	const { data: chain } = trpc.useQuery([
+	const { data: chain } = api.useQuery([
 		"example.getChain",
 		{ username: queryUser },
 	]);
@@ -51,8 +51,8 @@ const AddLinkk = () => {
 	const [inputUrl, setInputUrl] = useState("");
 	const [notes, setNotes] = useState("");
 
-	const ctx = trpc.useContext();
-	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
+	const ctx = api.useContext();
+	const { mutate: addToChain } = api.useMutation("question.addToChain", {
 		onSuccess: () => ctx.invalidateQueries("example.getChain"),
 	});
 
