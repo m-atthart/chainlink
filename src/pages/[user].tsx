@@ -1,28 +1,21 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { trpc } from "../utils/trpc";
+import { api } from "../utils/trpc";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
 const Chain = () => {
-	const { isLoaded, isSignedIn, user: currentUser } = useUser();
+	const { isSignedIn, user: currentUser } = useUser();
 	const { signOut } = useAuth();
 	const router = useRouter();
-	const { user: queryUser } = router.query as { user: string };
+	const { user: queryUser } = router.query as { user?: string };
 	if (queryUser === "me") {
 		if (!currentUser) router.push("/login");
 		else router.push(`/${currentUser.username}`);
 	}
 
-	const { data: chain } = trpc.useQuery([
-		"example.getChain",
-		{ username: queryUser },
-	]);
-
-	if (!isLoaded) {
-		return <div>Loading...</div>;
-	}
+	const { data: chain } = api.getChain.useQuery({ username: queryUser ?? "" });
 
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
@@ -51,13 +44,18 @@ const AddLinkk = () => {
 	const [inputUrl, setInputUrl] = useState("");
 	const [notes, setNotes] = useState("");
 
-	const ctx = trpc.useContext();
-	const { mutate: addToChain } = trpc.useMutation("question.addToChain", {
-		onSuccess: () => ctx.invalidateQueries("example.getChain"),
+	const { user: currentUser } = useUser();
+	const ctx = api.useContext();
+	const { mutate: addToChain } = api.addToChain.useMutation({
+		onSuccess: () =>
+			currentUser?.username &&
+			ctx.getChain.invalidate({ username: currentUser.username }),
 	});
 
 	const addLinkk = () => {
 		addToChain({ url: inputUrl, notes });
+		setInputUrl("");
+		setNotes("");
 	};
 
 	return (

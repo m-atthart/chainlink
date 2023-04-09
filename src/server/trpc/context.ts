@@ -1,6 +1,4 @@
-// src/server/router/context.ts
-import { router, type inferAsyncReturnType } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
 import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import type {
@@ -8,8 +6,15 @@ import type {
 	SignedOutAuthObject,
 } from "@clerk/nextjs/dist/api";
 
-type AuthContextProps = {
-	auth: SignedInAuthObject | SignedOutAuthObject;
+type CreateContextOptions = {
+	session: SignedInAuthObject | SignedOutAuthObject | undefined;
+};
+
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
+	return {
+		session: opts.session,
+		prisma,
+	};
 };
 
 export const createContext = async (opts?: CreateNextContextOptions) => {
@@ -22,14 +27,15 @@ export const createContext = async (opts?: CreateNextContextOptions) => {
 		session.user = user;
 	}
 
+	const innerTRPCContext = createInnerTRPCContext({
+		session,
+	});
+
 	return {
+		...innerTRPCContext,
 		req,
 		res,
-		session,
-		prisma,
 	};
 };
 
-type Context = inferAsyncReturnType<typeof createContext>;
-
-export const createRouter = () => router<Context>();
+export type Context = typeof createContext;

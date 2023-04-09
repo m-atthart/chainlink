@@ -1,26 +1,52 @@
-// src/utils/trpc.ts
-import type { AppRouter } from "../server/router";
-import { createReactQueryHooks } from "@trpc/react";
-import type { inferProcedureOutput, inferProcedureInput } from "@trpc/server";
-
-export const trpc = createReactQueryHooks<AppRouter>();
-
 /**
- * This is a helper method to infer the output of a query resolver
- * @example type HelloOutput = inferQueryOutput<'hello'>
+ * This is the client-side entrypoint for your tRPC API. It is used to create the `api` object which
+ * contains the Next.js App-wrapper, as well as your type-safe React Query hooks.
+ *
+ * We also create a few inference helpers for input and output types.
  */
-export type inferQueryOutput<
-  TRouteKey extends keyof AppRouter["_def"]["queries"],
-> = inferProcedureOutput<AppRouter["_def"]["queries"][TRouteKey]>;
+import { httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCNext } from "@trpc/next";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import superjson from "superjson";
 
-export type inferQueryInput<
-  TRouteKey extends keyof AppRouter["_def"]["queries"],
-> = inferProcedureInput<AppRouter["_def"]["queries"][TRouteKey]>;
+import type { AppRouter } from "../server/trpc/index";
 
-export type inferMutationOutput<
-  TRouteKey extends keyof AppRouter["_def"]["mutations"],
-> = inferProcedureOutput<AppRouter["_def"]["mutations"][TRouteKey]>;
+const getBaseUrl = () => {
+	if (typeof window !== "undefined") return ""; // browser should use relative url
+	if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
+	return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+};
 
-export type inferMutationInput<
-  TRouteKey extends keyof AppRouter["_def"]["mutations"],
-> = inferProcedureInput<AppRouter["_def"]["mutations"][TRouteKey]>;
+/** A set of type-safe react-query hooks for your tRPC API. */
+export const api = createTRPCNext<AppRouter>({
+	config() {
+		return {
+			transformer: superjson,
+
+			/**
+			 * Links used to determine request flow from client to server.
+			 *
+			 * @see https://trpc.io/docs/links
+			 */
+			links: [
+				loggerLink({
+					enabled: (opts) =>
+						process.env.NODE_ENV === "development" ||
+						(opts.direction === "down" && opts.result instanceof Error),
+				}),
+				httpBatchLink({
+					url: `${getBaseUrl()}/api/trpc`,
+				}),
+			],
+		};
+	},
+	/**
+	 * Whether tRPC should await queries when server rendering pages.
+	 *
+	 * @see https://trpc.io/docs/nextjs#ssr-boolean-default-false
+	 */
+	ssr: false,
+});
+
+export type RouterInputs = inferRouterInputs<AppRouter>;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;
