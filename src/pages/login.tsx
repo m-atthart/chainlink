@@ -3,11 +3,17 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useUser, SignIn } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { useEffect } from "react";
 
 const Login: NextPage = () => {
 	const router = useRouter();
-	const { user } = useUser();
-	if (user) router.push(`/${user.username}`);
+	const { user, isLoaded } = useUser();
+
+	useEffect(() => {
+		if (isLoaded && user) {
+			router.push(`/${user.username}`);
+		}
+	}, [isLoaded, user, router]);
 
 	return (
 		<>

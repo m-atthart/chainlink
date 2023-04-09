@@ -6,14 +6,17 @@ import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
 const Chain = () => {
-	const { isSignedIn, user: currentUser } = useUser();
+	const { isLoaded, isSignedIn, user } = useUser();
 	const { signOut } = useAuth();
 	const router = useRouter();
 	const { user: queryUser } = router.query as { user?: string };
-	if (queryUser === "me") {
-		if (!currentUser) router.push("/login");
-		else router.push(`/${currentUser.username}`);
-	}
+
+	useEffect(() => {
+		if (queryUser === "me" && isLoaded) {
+			if (!user) router.push("/login");
+			else router.push(`/${user.username}`);
+		}
+	}, [isLoaded, user, queryUser, router]);
 
 	const { data: chain } = api.getChain.useQuery({ username: queryUser ?? "" });
 
@@ -21,7 +24,7 @@ const Chain = () => {
 		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
 			<header className="flex w-full items-center justify-end p-8">
 				<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
-					<p>Hello {currentUser?.username}</p>
+					<p>Hello {user?.username}</p>
 				</div>
 				<button
 					className="h-12 w-36 bg-slate-600 text-white"
