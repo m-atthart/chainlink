@@ -8,23 +8,16 @@ import { parse } from "parse5";
 import { Element } from "parse5/dist/tree-adapters/default";
 
 const Chain = () => {
-	const { isLoaded, isSignedIn, user: currentUser } = useUser();
+	const { isSignedIn, user: currentUser } = useUser();
 	const { signOut } = useAuth();
 	const router = useRouter();
-	const { user: queryUser } = router.query as { user: string };
+	const { user: queryUser } = router.query as { user?: string };
 	if (queryUser === "me") {
 		if (!currentUser) router.push("/login");
 		else router.push(`/${currentUser.username}`);
 	}
 
-	const { data: chain } = api.useQuery([
-		"example.getChain",
-		{ username: queryUser },
-	]);
-
-	if (!isLoaded) {
-		return <div>Loading...</div>;
-	}
+	const { data: chain } = api.getChain.useQuery({ username: queryUser ?? "" });
 
 	return (
 		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
@@ -53,9 +46,12 @@ const AddLinkk = () => {
 	const [inputUrl, setInputUrl] = useState("");
 	const [notes, setNotes] = useState("");
 
+	const { user: currentUser } = useUser();
 	const ctx = api.useContext();
-	const { mutate: addToChain } = api.useMutation("question.addToChain", {
-		onSuccess: () => ctx.invalidateQueries("example.getChain"),
+	const { mutate: addToChain } = api.addToChain.useMutation({
+		onSuccess: () =>
+			currentUser?.username &&
+			ctx.getChain.invalidate({ username: currentUser.username }),
 	});
 
 	const addLinkk = () => {
