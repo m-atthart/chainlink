@@ -1,23 +1,26 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../utils/trpc";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { parse } from "parse5";
 import { Element } from "parse5/dist/tree-adapters/default";
 
 const Chain = () => {
-	const { isLoaded, isSignedIn, user } = useUser();
+	const { isLoaded, isSignedIn, user: currentUser } = useUser();
 	const { signOut } = useAuth();
 	const router = useRouter();
-	let { userId: username } = router.query as { userId: string };
-	if (username === "me") {
-		if (!user?.username) router.push("/login");
-		else router.push(`/user/${user.username}/chain`);
+	const { user: queryUser } = router.query as { user: string };
+	if (queryUser === "me") {
+		if (!currentUser) router.push("/login");
+		else router.push(`/${currentUser.username}`);
 	}
 
-	const { data: chain } = trpc.useQuery(["example.getChain", { username }]);
+	const { data: chain } = trpc.useQuery([
+		"example.getChain",
+		{ username: queryUser },
+	]);
 
 	if (!isLoaded) {
 		return <div>Loading...</div>;
@@ -27,7 +30,7 @@ const Chain = () => {
 		<div className="flex min-h-screen w-full flex-col items-center justify-start gap-8 bg-gradient-to-br from-gradient-start to-gradient-end">
 			<header className="flex w-full items-center justify-end p-8">
 				<div className="m-2 flex h-12 w-36 items-center justify-center bg-slate-600 text-white">
-					<p>Hello {user?.username}</p>
+					<p>Hello {currentUser?.username}</p>
 				</div>
 				<button
 					className="h-12 w-36 bg-slate-600 text-white"

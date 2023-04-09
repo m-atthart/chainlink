@@ -7,7 +7,7 @@ import { dark } from "@clerk/themes";
 const Login: NextPage = () => {
 	const router = useRouter();
 	const { user } = useUser();
-	if (user?.id) router.push("/user/me/chain");
+	if (user) router.push(`/${user.username}`);
 
 	return (
 		<>
