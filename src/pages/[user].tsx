@@ -54,6 +54,8 @@ const AddLinkk = () => {
 
 	const addLinkk = () => {
 		addToChain({ url: inputUrl, notes });
+		setInputUrl("");
+		setNotes("");
 	};
 
 	return (

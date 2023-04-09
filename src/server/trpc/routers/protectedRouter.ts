@@ -10,7 +10,6 @@ export const protectedRouter = createRouter({
 			})
 		)
 		.mutation(async ({ input, ctx }) => {
-			console.log("addToChain");
 			const response = await ctx.prisma.link.create({
 				data: {
 					url: input.url,
