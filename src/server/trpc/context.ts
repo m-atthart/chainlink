@@ -7,8 +7,15 @@ import type {
 	SignedOutAuthObject,
 } from "@clerk/nextjs/dist/api";
 
-type AuthContextProps = {
-	auth: SignedInAuthObject | SignedOutAuthObject;
+type CreateContextOptions = {
+	session: SignedInAuthObject | SignedOutAuthObject | undefined;
+};
+
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
+	return {
+		session: opts.session,
+		prisma,
+	};
 };
 
 export const createContext = async (opts?: CreateNextContextOptions) => {
@@ -21,12 +28,15 @@ export const createContext = async (opts?: CreateNextContextOptions) => {
 		session.user = user;
 	}
 
+	const innerTRPCContext = createInnerTRPCContext({
+		session,
+	});
+
 	return {
+		...innerTRPCContext,
 		req,
 		res,
-		session,
-		prisma,
 	};
 };
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = typeof createContext;
