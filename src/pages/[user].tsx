@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 import { api } from "../utils/trpc";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { parse } from "parse5";
-import { Element } from "parse5/dist/tree-adapters/default";
 
 const Chain = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
@@ -63,12 +61,6 @@ const AddLinkk = () => {
 		setNotes("");
 	};
 
-	useEffect(() => {
-		// getOgProperties(
-		// 	"https://twitter.com/ThePrimeagen/status/1641499089199063052"
-		// ).then((properties) => console.log(properties));
-	}, []);
-
 	if (status === "loading") return <div>Loading...</div>;
 
 	return (
@@ -96,52 +88,11 @@ const AddLinkk = () => {
 	);
 };
 
-type OgProperties = { [key: string]: string | undefined }[];
-
-function getOgProperties(url: string) {
-	return fetch(url)
-		.then((res) => res.text())
-		.then((data) => {
-			const document = parse(data);
-			const html = document.childNodes[0] as Element;
-			const head = html.childNodes[0] as Element;
-			console.log(head.childNodes);
-			const metaTags = head.childNodes.filter(
-				(node) => node.nodeName === "meta"
-			) as Element[];
-			const ogTags = metaTags.filter((tag) =>
-				tag.attrs.some(
-					(attr) => attr.name === "property" && attr.value.startsWith("og:")
-				)
-			) as Element[];
-			const ogProperties = ogTags.map((tag) => {
-				const content = tag.attrs.find(
-					(attr) => attr.name === "content"
-				)?.value;
-				const property = tag.attrs
-					.find((attr) => attr.name === "property")
-					?.value.slice(3)!;
-				return { [property]: content };
-			});
-			return ogProperties;
-		});
-}
-
 const Linkk = ({
 	link,
 }: {
 	link: { id: number; url: string; notes: string | null; username: string };
 }) => {
-	const [ogProperties, setOgProperties] = useState<OgProperties>([]);
-
-	useEffect(() => {
-		//getOgProperties(link.url).then((properties) => setOgProperties(properties));
-	}, [link.url]);
-
-	useEffect(() => {
-		//console.log(ogProperties);
-	}, [ogProperties]);
-
 	return (
 		<div
 			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
