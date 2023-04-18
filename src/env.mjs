@@ -25,10 +25,10 @@ const processEnv = {
 	CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
 };
 
-const merged = serverSchema.merge(clientSchema);
+const mergedSchema = serverSchema.merge(clientSchema);
 
-/** @typedef {z.input<typeof merged>} MergedInput */
-/** @typedef {z.infer<typeof merged>} MergedOutput */
+/** @typedef {z.input<typeof mergedSchema>} MergedInput */
+/** @typedef {z.infer<typeof mergedSchema>} MergedOutput */
 /** @typedef {z.SafeParseReturnType<MergedInput, MergedOutput>} MergedSafeParseReturn */
 
 let env = /** @type {MergedOutput} */ (process.env);
@@ -38,7 +38,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
 
 	const parsed = /** @type {MergedSafeParseReturn} */ (
 		isServer
-			? merged.safeParse(processEnv) // on server we can validate all env vars
+			? mergedSchema.safeParse(processEnv) // on server we can validate all env vars
 			: clientSchema.safeParse(processEnv) // on client we can only validate the ones that are exposed
 	);
 
