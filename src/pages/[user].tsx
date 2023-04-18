@@ -64,9 +64,9 @@ const AddLinkk = () => {
 	};
 
 	useEffect(() => {
-		getOgProperties(
-			"https://twitter.com/ThePrimeagen/status/1641499089199063052"
-		).then((properties) => console.log(properties));
+		// getOgProperties(
+		// 	"https://twitter.com/ThePrimeagen/status/1641499089199063052"
+		// ).then((properties) => console.log(properties));
 	}, []);
 
 	if (status === "loading") return <div>Loading...</div>;
