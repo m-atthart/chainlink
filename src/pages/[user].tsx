@@ -108,7 +108,7 @@ const Linkk = ({
 			key={link.id}
 		>
 			<div className="flex w-full flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
-				<div className="relative aspect-video w-full overflow-hidden bg-slate-100 md:h-36 md:w-auto">
+				<div className="relative aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
 					<Link href={link.url} rel="noopener noreferrer" target="_blank">
 						{ogImage ? (
 							<Image
