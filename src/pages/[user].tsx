@@ -1,5 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "../utils/trpc";
 import { useUser, useAuth } from "@clerk/nextjs";
@@ -93,21 +95,36 @@ const Linkk = ({
 }: {
 	link: { id: number; url: string; notes: string | null; username: string };
 }) => {
+	const { data: ogProps } = api.getOGProperties.useQuery({
+		url: link.url,
+	});
+	const ogTitle = ogProps?.find((prop) => prop.title)?.title;
+	const ogDescription = ogProps?.find((prop) => prop.description)?.description;
+	const ogImage = ogProps?.find((prop) => prop.image)?.image;
+
 	return (
 		<div
 			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
 			key={link.id}
 		>
-			<div className="flex flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
-				<div className="aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
-					thumbnail
+			<div className="flex w-full flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
+				<div className="relative aspect-video w-full overflow-hidden bg-slate-100 md:h-36 md:w-auto">
+					<Link href={link.url} rel="noopener noreferrer" target="_blank">
+						{ogImage ? (
+							<Image
+								className="object-cover"
+								src={ogImage}
+								fill={true}
+								alt=""
+							/>
+						) : (
+							<p>no thumbnail</p>
+						)}
+					</Link>
 				</div>
 				<div className="flex h-full flex-col justify-start">
-					<h3 className="text-xl">Title Title Title Title Title Title</h3>
-					<p className="text-gray-500">
-						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
-						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
-					</p>
+					<h3 className="text-xl">{ogTitle}</h3>
+					<p className="text-gray-500">{ogDescription}</p>
 				</div>
 			</div>
 			{link.notes && (
