@@ -36,7 +36,7 @@ const Chain = () => {
 				</button>
 			</header>
 			{isSignedIn && <AddLinkk />}
-			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
+			<div className="flex w-full max-w-screen-xl flex-col items-center justify-start">
 				{chain?.map((link) => (
 					<Linkk key={link.id} link={link} />
 				))}
@@ -98,18 +98,26 @@ const Linkk = ({
 	const { data: ogProps } = api.getOGProperties.useQuery({
 		url: link.url,
 	});
-	const ogTitle = ogProps?.find((prop) => prop.title)?.title;
+	const ogTitle =
+		ogProps?.find((prop) => prop.title)?.title ??
+		ogProps?.find((prop) => prop.site_name)?.site_name ??
+		link.url;
 	const ogDescription = ogProps?.find((prop) => prop.description)?.description;
 	const ogImage = ogProps?.find((prop) => prop.image)?.image;
 
 	return (
 		<div
-			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
+			className="m-2 flex min-h-min w-10/12 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
 			key={link.id}
 		>
-			<div className="flex w-full flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
-				<div className="relative aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
-					<Link href={link.url} rel="noopener noreferrer" target="_blank">
+			<Link
+				className="h-full w-full"
+				href={link.url}
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				<div className="flex w-full flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
+					<div className="relative aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
 						{ogImage ? (
 							<Image
 								className="object-cover"
@@ -118,15 +126,20 @@ const Linkk = ({
 								alt=""
 							/>
 						) : (
-							<p>no thumbnail</p>
+							<Image
+								className="scale-50 object-contain"
+								src="https://cdn-icons-png.flaticon.com/512/2088/2088090.png"
+								fill={true}
+								alt=""
+							/>
 						)}
-					</Link>
+					</div>
+					<div className="flex h-full flex-col justify-start">
+						<h3 className="text-xl">{ogTitle}</h3>
+						<p className="text-gray-500">{ogDescription}</p>
+					</div>
 				</div>
-				<div className="flex h-full flex-col justify-start">
-					<h3 className="text-xl">{ogTitle}</h3>
-					<p className="text-gray-500">{ogDescription}</p>
-				</div>
-			</div>
+			</Link>
 			{link.notes && (
 				<div>
 					<p>Notes:</p>
