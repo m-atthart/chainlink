@@ -1,5 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "../utils/trpc";
 import { useUser, useAuth } from "@clerk/nextjs";
@@ -34,7 +36,7 @@ const Chain = () => {
 				</button>
 			</header>
 			{isSignedIn && <AddLinkk />}
-			<div className="flex w-full min-w-fit max-w-7xl flex-col items-center justify-start md:w-3/5">
+			<div className="flex w-full max-w-screen-xl flex-col items-center justify-start">
 				{chain?.map((link) => (
 					<Linkk key={link.id} link={link} />
 				))}
@@ -60,6 +62,8 @@ const AddLinkk = () => {
 		setInputUrl("");
 		setNotes("");
 	};
+
+	if (status === "loading") return <div>Loading...</div>;
 
 	return (
 		<div className="flex flex-col items-center gap-2">
@@ -89,25 +93,54 @@ const AddLinkk = () => {
 const Linkk = ({
 	link,
 }: {
-	link: { id: number; url: string; notes: string | null; username: string };
+	link: {
+		id: number;
+		url: string;
+		notes: string | null;
+		ogTitle: string | null;
+		ogSiteName: string | null;
+		ogDescription: string | null;
+		ogImage: string | null;
+		username: string;
+	};
 }) => {
 	return (
 		<div
-			className="m-2 flex min-h-min w-4/5 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
+			className="m-2 flex min-h-min w-10/12 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
 			key={link.id}
 		>
-			<div className="flex flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
-				<div className="aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
-					thumbnail
+			<Link
+				className="h-full w-full"
+				href={link.url}
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				<div className="flex w-full flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
+					<div className="relative aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
+						{link.ogImage ? (
+							<Image
+								className="object-cover"
+								src={link.ogImage}
+								fill={true}
+								alt=""
+							/>
+						) : (
+							<Image
+								className="scale-50 object-contain"
+								src="https://cdn-icons-png.flaticon.com/512/2088/2088090.png"
+								fill={true}
+								alt=""
+							/>
+						)}
+					</div>
+					<div className="flex h-full flex-col justify-start">
+						<h3 className="text-xl">
+							{link.ogTitle ?? link.ogSiteName ?? link.url}
+						</h3>
+						<p className="text-gray-500">{link.ogDescription}</p>
+					</div>
 				</div>
-				<div className="flex h-full flex-col justify-start">
-					<h3 className="text-xl">Title Title Title Title Title Title</h3>
-					<p className="text-gray-500">
-						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
-						Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle Subtitle
-					</p>
-				</div>
-			</div>
+			</Link>
 			{link.notes && (
 				<div>
 					<p>Notes:</p>

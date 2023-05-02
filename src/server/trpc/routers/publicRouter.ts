@@ -9,13 +9,32 @@ export const publicRouter = createRouter({
 			})
 		)
 		.query(async ({ input, ctx }) => {
-			const response = await ctx.prisma.link.findMany({
+			const chain = await ctx.prisma.link.findMany({
 				where: {
 					username: {
 						equals: input.username,
 					},
 				},
+				orderBy: {
+					timestamp: "desc",
+				},
 			});
-			return response;
+
+			// which is faster? who knows?
+			// definitely note this one won't work easily on db branches because the user won't exist
+			// const chain = await ctx.prisma.user.findUnique({
+			// 	where: {
+			// 		name: input.username,
+			// 	},
+			// 	include: {
+			// 		chain: {
+			// 			orderBy: {
+			// 				timestamp: "asc",
+			// 			},
+			// 		},
+			// 	},
+			// });
+
+			return chain;
 		}),
 });
