@@ -93,18 +93,17 @@ const AddLinkk = () => {
 const Linkk = ({
 	link,
 }: {
-	link: { id: number; url: string; notes: string | null; username: string };
+	link: {
+		id: number;
+		url: string;
+		notes: string | null;
+		ogTitle: string | null;
+		ogSiteName: string | null;
+		ogDescription: string | null;
+		ogImage: string | null;
+		username: string;
+	};
 }) => {
-	const { data: ogProps } = api.getOGProperties.useQuery({
-		url: link.url,
-	});
-	const ogTitle =
-		ogProps?.find((prop) => prop.title)?.title ??
-		ogProps?.find((prop) => prop.site_name)?.site_name ??
-		link.url;
-	const ogDescription = ogProps?.find((prop) => prop.description)?.description;
-	const ogImage = ogProps?.find((prop) => prop.image)?.image;
-
 	return (
 		<div
 			className="m-2 flex min-h-min w-10/12 flex-col items-start justify-start gap-4 rounded-lg border-2 bg-white p-4"
@@ -118,10 +117,10 @@ const Linkk = ({
 			>
 				<div className="flex w-full flex-col justify-start gap-4 rounded-lg p-4 shadow-md shadow-slate-200 md:flex-row">
 					<div className="relative aspect-video w-full bg-slate-100 md:h-36 md:w-auto">
-						{ogImage ? (
+						{link.ogImage ? (
 							<Image
 								className="object-cover"
-								src={ogImage}
+								src={link.ogImage}
 								fill={true}
 								alt=""
 							/>
@@ -135,8 +134,10 @@ const Linkk = ({
 						)}
 					</div>
 					<div className="flex h-full flex-col justify-start">
-						<h3 className="text-xl">{ogTitle}</h3>
-						<p className="text-gray-500">{ogDescription}</p>
+						<h3 className="text-xl">
+							{link.ogTitle ?? link.ogSiteName ?? link.url}
+						</h3>
+						<p className="text-gray-500">{link.ogDescription}</p>
 					</div>
 				</div>
 			</Link>

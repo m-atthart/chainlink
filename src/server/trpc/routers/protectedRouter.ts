@@ -27,7 +27,15 @@ const getOgProperties = (url: string) => {
 					?.value.slice(3)!;
 				return { [property]: content };
 			});
-			return ogProperties;
+
+			const ogTitle = ogProperties.find((prop) => prop.title)?.title;
+			const ogSiteName = ogProperties.find((prop) => prop.site_name)?.site_name;
+			const ogDescription = ogProperties.find(
+				(prop) => prop.description
+			)?.description;
+			const ogImage = ogProperties.find((prop) => prop.image)?.image;
+
+			return { ogTitle, ogSiteName, ogDescription, ogImage };
 		});
 };
 
@@ -40,26 +48,22 @@ export const protectedRouter = createRouter({
 			})
 		)
 		.mutation(async ({ input, ctx }) => {
-			const ogProperties = await getOgProperties(input.url);
-
-			console.log(ogProperties);
+			const { ogTitle, ogSiteName, ogDescription, ogImage } =
+				await getOgProperties(input.url);
 
 			const response = await ctx.prisma.link.create({
 				data: {
 					url: input.url,
 					notes: input.notes,
+					ogTitle,
+					ogSiteName,
+					ogDescription,
+					ogImage,
 					username: ctx.session.user.username,
+					timestamp: new Date(),
 				},
 			});
 
 			return response;
-		}),
-	getOGProperties: protectedProcedure
-		.input(z.object({ url: z.string() }))
-		.query(async ({ input }) => {
-			const ogProperties = await getOgProperties(input.url);
-			console.log(ogProperties);
-
-			return ogProperties;
 		}),
 });
