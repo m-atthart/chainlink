@@ -6,13 +6,11 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "tsc && next lint",
-		"postinstall": "prisma generate"
+		"lint": "tsc && next lint"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^4.14.0",
 		"@clerk/themes": "^1.5.2",
-		"@prisma/client": "^4.12.0",
 		"@tanstack/react-query": "^4.28.0",
 		"@trpc/client": "^10.19.1",
 		"@trpc/next": "^10.19.1",
@@ -36,7 +34,6 @@
 		"postcss": "^8.4.14",
 		"prettier": "^2.8.4",
 		"prettier-plugin-tailwindcss": "^0.2.3",
-		"prisma": "^4.12.0",
 		"tailwindcss": "^3.1.7",
 		"typescript": "^5.0.4"
 	}
