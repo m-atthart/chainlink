@@ -1,4 +1,5 @@
 import { createRouter, protectedProcedure } from "../trpc";
+import { link } from "../../db/schema";
 import { z } from "zod";
 import { parse } from "parse5";
 import { Element } from "parse5/dist/tree-adapters/default";
@@ -51,17 +52,15 @@ export const protectedRouter = createRouter({
 			const { ogTitle, ogSiteName, ogDescription, ogImage } =
 				await getOgProperties(input.url);
 
-			const response = await ctx.prisma.link.create({
-				data: {
-					url: input.url,
-					notes: input.notes,
-					ogTitle,
-					ogSiteName,
-					ogDescription,
-					ogImage,
-					username: ctx.session.user.username,
-					timestamp: new Date(),
-				},
+			const response = await ctx.drizzle.insert(link).values({
+				url: input.url,
+				notes: input.notes,
+				ogTitle,
+				ogSiteName,
+				ogDescription,
+				ogImage,
+				username: ctx.session.user.username,
+				// timestamp: new Date(),
 			});
 
 			return response;

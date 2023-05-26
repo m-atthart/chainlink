@@ -1,5 +1,5 @@
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { prisma } from "../db/client";
+import { drizzle } from "../db/client";
 import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import type {
 	SignedInAuthObject,
@@ -13,7 +13,7 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
 	return {
 		session: opts.session,
-		prisma,
+		//drizzle,
 	};
 };
 

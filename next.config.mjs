@@ -21,4 +21,7 @@ export default defineNextConfig({
 			},
 		],
 	},
+	experimental: {
+		serverComponentsExternalPackages: ["mysql2"],
+	},
 });

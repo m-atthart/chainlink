@@ -5,6 +5,9 @@ const serverSchema = z.object({
 	DATABASE_URL: z.string().url(),
 	NODE_ENV: z.enum(["development", "test", "production"]),
 	CLERK_SECRET_KEY: z.string(),
+	DATABASE_HOST: z.string(),
+	DATABASE_USERNAME: z.string(),
+	DATABASE_PASSWORD: z.string(),
 });
 
 const clientSchema = z.object({
@@ -23,6 +26,9 @@ const processEnv = {
 	DATABASE_URL: process.env.DATABASE_URL,
 	NODE_ENV: process.env.NODE_ENV,
 	CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+	DATABASE_HOST: process.env.DATABASE_HOST,
+	DATABASE_USERNAME: process.env.DATABASE_USERNAME,
+	DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
 };
 
 const mergedSchema = serverSchema.merge(clientSchema);

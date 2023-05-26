@@ -1,4 +1,8 @@
 import { createRouter, publicProcedure } from "../trpc";
+import { connect } from "@planetscale/database";
+import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { desc, eq } from "drizzle-orm";
+import { link } from "../../db/schema";
 import { z } from "zod";
 
 export const publicRouter = createRouter({
@@ -9,32 +13,29 @@ export const publicRouter = createRouter({
 			})
 		)
 		.query(async ({ input, ctx }) => {
-			const chain = await ctx.prisma.link.findMany({
-				where: {
-					username: {
-						equals: input.username,
-					},
-				},
-				orderBy: {
-					timestamp: "desc",
-				},
+			const connection = connect({
+				host: process.env["DATABASE_HOST"],
+				username: process.env["DATABASE_USERNAME"],
+				password: process.env["DATABASE_PASSWORD"],
 			});
 
-			// which is faster? who knows?
-			// definitely note this one won't work easily on db branches because the user won't exist
-			// const chain = await ctx.prisma.user.findUnique({
-			// 	where: {
-			// 		name: input.username,
-			// 	},
-			// 	include: {
-			// 		chain: {
-			// 			orderBy: {
-			// 				timestamp: "asc",
-			// 			},
-			// 		},
-			// 	},
-			// });
+			const db = drizzle(connection);
 
-			return chain;
+			try {
+				const links = await db.select().from(link);
+				console.log(links);
+				//const links = await ctx.drizzle.select().from(link);
+				//console.log(links);
+			} catch (e) {
+				console.log(e);
+			}
+			// const chain = await ctx.drizzle
+			// 	.select()
+			// 	.from(link)
+			// 	.where(eq(link.username, input.username))
+			// 	.orderBy(desc(link.timestamp))
+			// 	.execute();
+
+			// return chain;
 		}),
 });
