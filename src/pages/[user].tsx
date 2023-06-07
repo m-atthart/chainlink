@@ -35,7 +35,7 @@ const Chain = () => {
 					{isSignedIn ? "Sign Out" : "Sign In"}
 				</button>
 			</header>
-			{isSignedIn && <AddLinkk />}
+			{isSignedIn && queryUser === user.username && <AddLinkk />}
 			<div className="flex w-full max-w-screen-xl flex-col items-center justify-start">
 				{chain?.map((link) => (
 					<Linkk key={link.id} link={link} />

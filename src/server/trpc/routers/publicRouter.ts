@@ -20,21 +20,6 @@ export const publicRouter = createRouter({
 				},
 			});
 
-			// which is faster? who knows?
-			// definitely note this one won't work easily on db branches because the user won't exist
-			// const chain = await ctx.prisma.user.findUnique({
-			// 	where: {
-			// 		name: input.username,
-			// 	},
-			// 	include: {
-			// 		chain: {
-			// 			orderBy: {
-			// 				timestamp: "asc",
-			// 			},
-			// 		},
-			// 	},
-			// });
-
 			return chain;
 		}),
 });
