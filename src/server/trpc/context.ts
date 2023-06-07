@@ -4,7 +4,7 @@ import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import type {
 	SignedInAuthObject,
 	SignedOutAuthObject,
-} from "@clerk/nextjs/dist/api";
+} from "@clerk/backend/dist/types/tokens";
 
 type CreateContextOptions = {
 	session: SignedInAuthObject | SignedOutAuthObject | undefined;
