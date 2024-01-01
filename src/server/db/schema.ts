@@ -19,6 +19,27 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const mysqlTable = mysqlTableCreator((name) => `chainlinkk_${name}`);
 
+export const linkks = mysqlTable(
+  "linkk",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    url: varchar("url", { length: 256 }).notNull(),
+    notes: varchar("notes", { length: 256 }),
+    ogTitle: varchar("ogTitle", { length: 256 }),
+    ogSiteName: varchar("ogSiteName", { length: 256 }),
+    ogDescription: varchar("ogDescription", { length: 256 }),
+    ogImage: varchar("ogImage", { length: 256 }),
+    username: varchar("username", { length: 256 }).notNull(),
+    timestamp: timestamp("timestamp")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    createdById: varchar("createdById", { length: 255 }).notNull(),
+  },
+  (linkk) => ({
+    usernameIndex: index("username_idx").on(linkk.username),
+  }),
+);
+
 export const posts = mysqlTable(
   "post",
   {
@@ -33,7 +54,7 @@ export const posts = mysqlTable(
   (example) => ({
     createdByIdIdx: index("createdById_idx").on(example.createdById),
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
 
 export const users = mysqlTable("user", {
@@ -72,7 +93,7 @@ export const accounts = mysqlTable(
   (account) => ({
     compoundKey: primaryKey(account.provider, account.providerAccountId),
     userIdIdx: index("userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -90,7 +111,7 @@ export const sessions = mysqlTable(
   },
   (session) => ({
     userIdIdx: index("userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -106,5 +127,5 @@ export const verificationTokens = mysqlTable(
   },
   (vt) => ({
     compoundKey: primaryKey(vt.identifier, vt.token),
-  })
+  }),
 );

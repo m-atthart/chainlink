@@ -34,6 +34,7 @@
     "@next/eslint-plugin-next": "^14.0.3",
     "@types/eslint": "^8.44.7",
     "@types/node": "^18.17.0",
+    "@types/parse5": "^7.0.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
