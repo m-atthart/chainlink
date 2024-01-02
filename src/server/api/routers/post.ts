@@ -44,7 +44,12 @@ const getOgProperties = (url: string) => {
         ?.description;
       const ogImage = ogProperties.find((prop) => prop.image)?.image;
 
-      return { ogTitle, ogSiteName, ogDescription, ogImage };
+      return { ogTitle, ogSiteName, ogDescription, ogImage } as {
+        ogTitle: string;
+        ogSiteName: string;
+        ogDescription: string;
+        ogImage: string;
+      };
     });
 };
 
@@ -66,10 +71,20 @@ export const postRouter = createTRPCRouter({
       // 		timestamp: "desc",
       // 	},
       // });
-      await ctx.db.query.linkks.findMany({
-        orderBy: (linkks, { desc }) => [desc(linkks.timestamp)],
-      });
-      const chain = { data: [] };
+      // await ctx.db.query.linkks.findMany({
+      //   orderBy: (linkks, { desc }) => [desc(linkks.timestamp)],
+      // });
+      type Link = {
+        id: number;
+        url: string;
+        notes: string | null;
+        ogTitle: string | null;
+        ogSiteName: string | null;
+        ogDescription: string | null;
+        ogImage: string | null;
+        username: string;
+      };
+      const chain = { data: [] } as { data: Link[] };
 
       return chain;
     }),
@@ -97,6 +112,18 @@ export const postRouter = createTRPCRouter({
       //     timestamp: new Date(),
       //   },
       // });
+
+      await ctx.db.insert(linkks).values({
+        url: input.url,
+        notes: input.notes,
+        ogTitle,
+        ogSiteName,
+        ogDescription,
+        ogImage,
+        username: ctx.session.user.name!,
+        timestamp: new Date(),
+        createdById: ctx.session.user.id,
+      });
 
       const response = 200;
 
