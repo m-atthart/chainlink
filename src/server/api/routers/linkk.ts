@@ -11,7 +11,7 @@ import { linkks, users } from "~/server/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 import { parse } from "parse5";
-import type { Element } from "parse5/dist/tree-adapters/default";
+import type { Element } from "../../../../node_modules/parse5/dist/tree-adapters/default";
 
 const getOgProperties = (url: string) => {
 	return fetch(url)
@@ -21,21 +21,31 @@ const getOgProperties = (url: string) => {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const html = document.childNodes[1] as Element;
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			const head = html.childNodes[0] satisfies Element;
+			const head = html.childNodes[0] as Element;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			const metaTags = head.childNodes.filter(
-				(node) => node.nodeName === "meta",
+				(node: { nodeName: string }) => node.nodeName === "meta",
 			) as Element[];
 			const ogTags = metaTags.filter((tag) =>
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				tag.attrs.some(
-					(attr) => attr.name === "property" && attr.value.startsWith("og:"),
+					(attr: { name: string; value: string }) =>
+						attr.name === "property" && attr.value.startsWith("og:"),
 				),
 			);
-			const ogProperties = ogTags.map((tag) => {
+			const ogProperties: {
+				title?: string;
+				site_name?: string;
+				description?: string;
+				image?: string;
+			}[] = ogTags.map((tag) => {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 				const content = tag.attrs.find(
-					(attr) => attr.name === "content",
+					(attr: { name: string }) => attr.name === "content",
 				)?.value;
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-non-null-asserted-optional-chain
 				const property = tag.attrs
-					.find((attr) => attr.name === "property")
+					.find((attr: { name: string }) => attr.name === "property")
 					?.value.slice(3)!;
 				return { [property]: content };
 			});

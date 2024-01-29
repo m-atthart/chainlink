@@ -1,8 +1,6 @@
 import Link from "next/link";
 
-import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
-import { api } from "~/trpc/server";
 
 export default async function Home() {
 	const hello = { greeting: "hello from trpc" }; // await api.linkk.hello.query({ text: "from tRPC" });
@@ -76,7 +74,7 @@ async function CrudShowcase() {
 				<p>You have no posts yet.</p>
 			)}
 
-			<CreatePost />
+			{/* <CreatePost /> */}
 		</div>
 	);
 }

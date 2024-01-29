@@ -1,3 +1,4 @@
+/*
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -45,3 +46,4 @@ const Login: NextPage = () => {
 	);
 };
 export default Login;
+*/
