@@ -4,7 +4,7 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import TwitchProvider from "next-auth/providers/twitch";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -48,14 +48,14 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: DrizzleAdapter(db, mysqlTable),
   providers: [
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
+    TwitchProvider({
+      clientId: env.TWITCH_CLIENT_ID,
+      clientSecret: env.TWITCH_CLIENT_SECRET,
+    }),
     /**
      * ...add more providers here.
      *
-     * Most other providers require a bit more work than the Discord provider. For example, the
+     * Most other providers require a bit more work than the Twitch provider. For example, the
      * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
      * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
      *

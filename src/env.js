@@ -28,9 +28,12 @@ export const env = createEnv({
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
-    // Add ` on ID and SECRET if you want to make sure they're not empty
-    // DISCORD_CLIENT_ID: z.string(),
-    // DISCORD_CLIENT_SECRET: z.string(),
+    // This proxies the auth flow through production, allowing you to use auth in preview deployments
+    // NEXTAUTH_SECRET needs to be same between production and preview for proxy to work
+    // will not work until i upgrade to next-auth v5 (https://authjs.dev/guides/upgrade-to-v5)
+    AUTH_REDIRECT_PROXY_URL: z.string().url().optional(),
+    TWITCH_CLIENT_ID: z.string(),
+    TWITCH_CLIENT_SECRET: z.string(),
   },
 
   /**
@@ -51,8 +54,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    // DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
-    // DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+    AUTH_REDIRECT_PROXY_URL: process.env.AUTH_REDIRECT_PROXY_URL,
+    TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
+    TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

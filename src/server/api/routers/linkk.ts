@@ -81,6 +81,11 @@ export const linkkRouter = createTRPCRouter({
         .where(eq(users.name, input.username))
         .orderBy(desc(linkks.timestamp));
 
+      // subquery version
+      `select * from chainlinkk_linkk where exists (
+        select id from chainlinkk_user where chainlinkk_user.name = "matthartdev" and chainlinkk_linkk.authorId = id
+      );`;
+
       const chain = joinedChain.map((joinedLinkk) => {
         return joinedLinkk.linkk;
       });
