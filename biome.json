@@ -1,0 +1,10 @@
+{
+  "linter": {
+    "enabled": false
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "ignore": [".next", "drizzle", "node_modules"]
+  }
+}
