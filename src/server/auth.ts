@@ -46,6 +46,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
+  // @ts-expect-error: next-auth and authjs adapter types are out of sync for now, but functionality still correct
   adapter: DrizzleAdapter(db, mysqlTable),
   providers: [
     TwitchProvider({
